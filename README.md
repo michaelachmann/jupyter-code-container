@@ -1,26 +1,68 @@
 # Jupyter-Code-Container: Dockerized Dev Environment
 
-This repository contains a single Docker image that bundles together:
+[![Docker Pulls](https://img.shields.io/docker/pulls/chaichy/jupyter-code-container)](https://hub.docker.com/r/chaichy/jupyter-code-container)
 
-* **code-server** (VS Code in the browser) with pre-installed extensions
-* **JupyterLab** (via Miniforge/Conda) for Python notebooks
-* **Cloudflare Tunnel** (ephemeral, token-based) to expose both services securely through your domain
-* A shared `/workspace` volume for all your code and data
 
----
+> ⚠️ **This image is intended for CPU-based development environments. GPU/CUDA is not (yet) supported in this build.**
 
-## Features
-
-* **Unified environment**: one container runs both code-server and JupyterLab
-* **Cloudflare Tunnel**: no need to open ports on your host or worry about firewalls
-* **Auto-installed extensions**: Python, Jupyter, GitLens, GitHub Copilot
-* **Conda-managed JupyterLab**: isolated environment without pip system conflicts
-* **Mount your code**: mount a local folder to `/workspace` for seamless editing and notebooks
-* **Automatic VS Code ↔ Jupyter integration**: VS Code’s Jupyter extension is preconfigured to the local kernel
+A single Docker image for remote Python development:  
+VS Code (`code-server`) + JupyterLab + secure Cloudflare Tunnel, all set up and ready to go.
 
 ---
 
-## Repository Structure
+## 🚀 Quick Start
+
+**Get up and running in just a few steps:**
+
+```bash
+# 1. Pull the image from Docker Hub
+docker pull chaichy/jupyter-code-container:latest
+
+# 2. Run the container (replace paths and secrets)
+docker run -d \
+  --name dev-env \
+  -v /absolute/path/to/workspace:/workspace \
+  -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
+  -e JUPYTER_TOKEN="<your-jupyter-token>" \
+  -e PASSWORD="<your-vscode-password>" \
+  chaichy/jupyter-code-container:latest
+```
+
+---
+
+## 🌐 One-Click Deployment: RunPod
+
+Want a full dev environment in the cloud in minutes?  
+**[Deploy this stack directly on RunPod!](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)**
+
+[Deploy to RunPod](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)
+
+### RunPod Best Practices
+
+- **This container is designed for CPU instances.**  
+  If you select a GPU instance on RunPod, GPU acceleration will not be available out of the box.
+
+- **Set your environment variables as secrets!**
+    - `CF_TUNNEL_TOKEN`
+    - `JUPYTER_TOKEN`
+    - `PASSWORD`
+
+- **Mount your data**  
+  You can attach a persistent volume to `/workspace` so your code and notebooks persist between sessions.
+
+---
+
+## ✨ Features
+
+- **Unified environment**: One container, both code-server and JupyterLab.
+- **Cloudflare Tunnel**: Secure access, no open ports needed ([Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/)).
+- **Auto-installed VS Code Extensions**: Python, Jupyter.
+- **Mount your code**: Mount a local folder to `/workspace` for editing and notebooks.
+- **Pre-configured VS Code ↔ Jupyter integration**.
+
+---
+
+## 📦 Repository Structure
 
 ```text
 ├── Dockerfile
@@ -32,34 +74,27 @@ This repository contains a single Docker image that bundles together:
 └── README.md
 ```
 
-* `Dockerfile`: builds the image with all components
-* `scripts/entrypoint.sh`: runtime script that launches cloudflared, JupyterLab, and code-server
-* `config/code-server-config.yaml`: code-server settings (bind address, auth)
-* `config/jupyter_notebook_config.py`: JupyterLab settings (token, notebook dir)
+---
+
+## ⚙️ Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed on your host
+- [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) setup, with a **Tunnel Token**
+- A domain & DNS in Cloudflare with [ingress rules](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/routing-to-tunnel/) for your tunnel
 
 ---
 
-## Prerequisites
-
-* Docker installed on your host
-* A Cloudflare Zero Trust Tunnel setup, with a valid **Tunnel Token**
-* A domain and DNS configured in Cloudflare with ingress rules for your tunnel
-
----
-
-## Build the Image
-
-From the repository root, run:
+## 🛠 Build the Image (optional)
 
 ```bash
+git clone https://github.com/chaichy/jupyter-code-container.git
+cd jupyter-code-container
 docker build -t chaichy/jupyter-code-container:latest .
 ```
 
 ---
 
-## Run the Container
-
-Use the following command (adjust paths and secrets):
+## 🖥 Run the Container
 
 ```bash
 docker run -d \
@@ -68,36 +103,38 @@ docker run -d \
   -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
   -e JUPYTER_TOKEN="<your-jupyter-token>" \
   -e PASSWORD="<your-vscode-password>" \
-  youruser/dev-tunnel:latest
+  chaichy/jupyter-code-container:latest
 ```
 
-* `-v /.../workspace:/workspace` mounts your local work directory
-* `CF_TUNNEL_TOKEN`: your Cloudflare tunnel token (ephemeral auth)
-* `JUPYTER_TOKEN`: password token for JupyterLab
-* `PASSWORD`: password for code-server
+- `-v /.../workspace:/workspace`: mounts your local workspace
+- `CF_TUNNEL_TOKEN`: [Get it here](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/)
+- `JUPYTER_TOKEN`: Password token for JupyterLab
+- `PASSWORD`: Password for VS Code
 
-### Access
+Access your services:
 
-* **VS Code** (browser): `https://code.YOUR_DOMAIN.com`
-* **JupyterLab** (browser): `https://jupyter.YOUR_DOMAIN.com`
-
-(The hostname routing is handled by your Cloudflare Tunnel ingress configuration.)
+- **VS Code**: `https://code.YOUR_DOMAIN.com`
+- **JupyterLab**: `https://jupyter.YOUR_DOMAIN.com`
 
 ---
 
-## Environment Variables
+## ⚡️ Environment Variables
 
 | Variable          | Description                                                           |
 | ----------------- | --------------------------------------------------------------------- |
-| `CF_TUNNEL_TOKEN` | Cloudflare Tunnel token for ephemeral tunnels                         |
+| `CF_TUNNEL_TOKEN` | Cloudflare Tunnel token ([setup guide](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/)) |
 | `JUPYTER_TOKEN`   | Token to secure JupyterLab                                            |
 | `PASSWORD`        | Password to secure code-server                                        |
-| `TARGETARCH`      | (Optional) Docker build arg for architecture (e.g., `amd64`, `arm64`) |
+| `TARGETARCH`      | (Optional) Docker build arg for architecture (`amd64`, `arm64`)       |
 
 ---
 
-## VS Code Extensions Installed
+## 🧩 VS Code Extensions Installed
 
-* **ms-python.python**
-* **ms-toolsai.jupyter**
+- [MS Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [MS Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 
+
+## 📄 License
+
+MIT License. See [LICENSE](LICENSE) for details.
