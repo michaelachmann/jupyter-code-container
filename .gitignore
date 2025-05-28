@@ -1,0 +1,77 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Conda environment
+.env/
+.conda/
+.venv/
+env/
+venv/
+opt/conda/
+
+# Docker files and volumes
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Docker-related
+docker-compose.override.yml
+.docker/
+**/.dockerignore
+
+# Jupyter artifacts
+.ipynb_checkpoints/
+jupyter_output/
+
+# VSCode config
+.vscode/
+
+# Python-specific
+*.egg
+*.egg-info/
+dist/
+build/
+develop-eggs/
+downloads/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+wheels/
+share/python-wheels/
+*.manifest
+*.spec
+*.pyc
+*.pyo
+
+# Environment variables and secrets
+.env
+*.env
+*.env.*
+
+# Node (if applicable for frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs and temp files
+*.log
+*.bak
+*.swp
+*.tmp
+*~
+
+# Project-specific
+runs/
+checkpoints/
+wandb/
+results/
+*.pt
+*.pth
+*.bin
+*.safetensors
