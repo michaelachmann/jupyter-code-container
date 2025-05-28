@@ -47,6 +47,9 @@ Want a full dev environment in the cloud in minutes?
     - `JUPYTER_TOKEN`
     - `PASSWORD`
 
+- **Use Cloudflare Zero Trust**  
+  Consider enabling [Cloudflare Zero Trust](https://developers.cloudflare.com/cloudflare-one/zero-trust/) for additional access control and logging. This lets you restrict access to your services based on identity, device posture, or other rules.
+
 - **Mount your data**  
   You can attach a persistent volume to `/workspace` so your code and notebooks persist between sessions.
 
@@ -79,7 +82,7 @@ Want a full dev environment in the cloud in minutes?
 ## ⚙️ Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) installed on your host
-- [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) setup, with a **Tunnel Token**
+- [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) setup, ideally combined with [Cloudflare Zero Trust](https://developers.cloudflare.com/cloudflare-one/zero-trust/) for access control
 - A domain & DNS in Cloudflare with [ingress rules](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/routing-to-tunnel/) for your tunnel
 
 ---
