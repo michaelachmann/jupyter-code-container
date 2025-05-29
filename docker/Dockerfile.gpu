@@ -11,6 +11,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 USER root
 
+RUN groupadd -r coder && \
+    useradd -r -g coder -m -d /home/coder coder
+
 # 1) System deps
 RUN apt-get update && apt-get install -y \
       curl git ca-certificates bzip2 && \
@@ -31,9 +34,9 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chown -R coder:coder /home/coder
 
 # 4) VS Code extensions
+RUN curl -fsSL https://code-server.dev/install.sh | sh 
 USER coder
-RUN curl -fsSL https://code-server.dev/install.sh | sh && \
-    code-server --install-extension ms-python.python && \
+RUN code-server --install-extension ms-python.python && \
     code-server --install-extension ms-toolsai.jupyter
 
 EXPOSE 8080 8888
