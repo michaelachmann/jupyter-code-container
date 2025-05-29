@@ -3,7 +3,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/chaichy/jupyter-code-container)](https://hub.docker.com/r/chaichy/jupyter-code-container)
 
 
-> ⚠️ **This image is intended for CPU-based development environments. GPU/CUDA is not (yet) supported in this build.**
+> ✅ Now available in two flavors: CPU and GPU (CUDA-enabled)
 
 A single Docker image for remote Python development:  
 VS Code (`code-server`) + JupyterLab + secure Cloudflare Tunnel, all set up and ready to go.
@@ -15,17 +15,35 @@ VS Code (`code-server`) + JupyterLab + secure Cloudflare Tunnel, all set up and 
 **Get up and running in just a few steps:**
 
 ```bash
-# 1. Pull the image from Docker Hub
-docker pull chaichy/jupyter-code-container:latest
+# CPU flavor
+docker pull chaichy/jupyter-code-container:cpu
 
-# 2. Run the container (replace paths and secrets)
+# GPU flavor (with CUDA, PyTorch)
+docker pull chaichy/jupyter-code-container:gpu
+```
+
+### Run the CPU image
+
+```bash
 docker run -d \
-  --name dev-env \
+  --name dev-cpu \
   -v /absolute/path/to/workspace:/workspace \
   -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
   -e JUPYTER_TOKEN="<your-jupyter-token>" \
   -e PASSWORD="<your-vscode-password>" \
-  chaichy/jupyter-code-container:latest
+  chaichy/jupyter-code-container:cpu
+```
+
+### Run the GPU image
+
+```bash
+docker run -d --gpus all \
+  --name dev-gpu \
+  -v /absolute/path/to/workspace:/workspace \
+  -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
+  -e JUPYTER_TOKEN="<your-jupyter-token>" \
+  -e PASSWORD="<your-vscode-password>" \
+  chaichy/jupyter-code-container:gpu
 ```
 
 ---
@@ -35,12 +53,11 @@ docker run -d \
 Want a full dev environment in the cloud in minutes?  
 **[Deploy this stack directly on RunPod!](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)**
 
-[Deploy to RunPod](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)
-
 ### RunPod Best Practices
 
-- **This container is designed for CPU instances.**  
-  If you select a GPU instance on RunPod, GPU acceleration will not be available out of the box.
+- Two flavors available — make sure you select the right instance type:
+  - `:cpu` → for all-purpose dev environments
+  - `:gpu` → for machine learning and CUDA workloads (requires GPU instance)
 
 - **Set your environment variables as secrets!**
     - `CF_TUNNEL_TOKEN`
@@ -68,12 +85,15 @@ Want a full dev environment in the cloud in minutes?
 ## 📦 Repository Structure
 
 ```text
-├── Dockerfile
+├── docker/
+│   ├── Dockerfile.cpu
+│   └── Dockerfile.gpu
 ├── scripts/
 │   └── entrypoint.sh
 ├── config/
 │   ├── code-server-config.yaml
-│   └── jupyter_notebook_config.py
+│   ├── jupyter_notebook_config.py
+│   └── environment.yml
 └── README.md
 ```
 
@@ -92,7 +112,16 @@ Want a full dev environment in the cloud in minutes?
 ```bash
 git clone https://github.com/chaichy/jupyter-code-container.git
 cd jupyter-code-container
-docker build -t chaichy/jupyter-code-container:latest .
+
+# CPU build
+docker build --platform linux/amd64 \
+  -f docker/Dockerfile.cpu \
+  -t chaichy/jupyter-code-container:cpu .
+
+# GPU build
+docker build --platform linux/amd64 \
+  -f docker/Dockerfile.gpu \
+  -t chaichy/jupyter-code-container:gpu .
 ```
 
 ---
@@ -137,6 +166,14 @@ Access your services:
 - [MS Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [MS Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 
+
+## 🧠 Tags & Flavors
+
+| Tag       | Description                              |
+|-----------|------------------------------------------|
+| `:cpu`    | VS Code + JupyterLab, optimized for CPU  |
+| `:gpu`    | Same setup + CUDA/PyTorch                |
+| `:latest` | Alias for `:cpu`                         |
 
 ## 📄 License
 
