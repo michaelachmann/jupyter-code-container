@@ -1,0 +1,21 @@
+# env/environment.yml
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyterlab
+  - pandas
+  - numpy
+  - matplotlib
+  - scikit-learn
+  - tabulate
+  - python-dotenv
+  - pip
+  - pip:
+      - backoff
+      - openai
+      - wandb
+      - krippendorff
+      - label-studio-sdk
+      - evaluate
+      - seqeval

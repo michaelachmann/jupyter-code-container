@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  dev-cpu:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.cpu
+    image: jupyter-code-container-cpu
+    volumes:
+      - /workspace:/workspace
+    environment:
+      - CF_TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      - PASSWORD=${PASSWORD}
+    ports:
+      - "8080:8080"
+      - "8888:8888"
+
+  dev-gpu:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gpu
+    image: jupyter-code-container-gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - /workspace:/workspace
+    environment:
+      - CF_TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      - PASSWORD=${PASSWORD}
+    ports:
+      - "8081:8080"
+      - "8889:8888"

@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────
+# GPU flavour
+# ─────────────────────────────────────────
+FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime
+
+ARG TARGETARCH=amd64
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/conda/bin:${PATH}" \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+USER root
+
+# 1) System deps
+RUN apt-get update && apt-get install -y \
+      curl git ca-certificates bzip2 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2) Python env (same shared deps)
+COPY config/environment.yml /tmp/environment.yml
+RUN conda env update -n base -f /tmp/environment.yml && conda clean -afy
+
+# 3) Cloudflared + entrypoint
+RUN curl -fsSL \
+    "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64" \
+    -o /usr/local/bin/cloudflared && chmod +x /usr/local/bin/cloudflared
+
+COPY config/ /root/.config/
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chown -R coder:coder /home/coder
+
+# 4) VS Code extensions
+USER coder
+RUN curl -fsSL https://code-server.dev/install.sh | sh && \
+    code-server --install-extension ms-python.python && \
+    code-server --install-extension ms-toolsai.jupyter
+
+EXPOSE 8080 8888
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -1,0 +1,44 @@
+# ─────────────────────────────────────────
+# CPU flavour
+# ─────────────────────────────────────────
+FROM codercom/code-server:latest
+
+ARG TARGETARCH=amd64
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/conda/bin:${PATH}"
+
+USER root
+
+# 1) System deps + Miniforge
+RUN apt-get update && apt-get install -y \
+      curl git ca-certificates bzip2 && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -fsSL \
+      "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" \
+      -o /tmp/conda.sh && \
+    bash /tmp/conda.sh -b -p /opt/conda && \
+    rm /tmp/conda.sh
+
+# 2) Python env (from one shared file)
+COPY config/environment.yml /tmp/environment.yml
+RUN conda env update -n base -f /tmp/environment.yml && conda clean -afy
+
+# 3) Cloudflared
+RUN curl -fsSL \
+    "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64" \
+    -o /usr/local/bin/cloudflared && chmod +x /usr/local/bin/cloudflared
+
+# 4) Copy configs & entrypoint
+COPY config/ /home/coder/.config/
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chown -R coder:coder /home/coder
+
+# 5) VS Code extensions
+USER coder
+RUN code-server --install-extension ms-python.python \
+ && code-server --install-extension ms-toolsai.jupyter
+
+EXPOSE 8080 8888
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
