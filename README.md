@@ -50,7 +50,7 @@ docker run -d --gpus all \
 ## 🌐 One-Click Deployment: RunPod
 
 Want a full dev environment in the cloud in minutes?  
-**[Deploy this stack directly on RunPod!](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)**
+**[Deploy this stack on RunPod with a single click using the CPU Template](https://runpod.io/console/deploy?template=kj8bldufic&ref=7v5mhnoa)** or use the [GPU Template instead](https://runpod.io/console/deploy?template=a2azpbomix&ref=7v5mhnoa).
 
 ### RunPod Best Practices
 
