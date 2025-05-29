@@ -1,7 +1,6 @@
-# Jupyter-Code-Container: Dockerized Dev Environment
+# Jupyter-Code-Container: Dockerized Dev Environment [![Docker Pulls](https://img.shields.io/docker/pulls/chaichy/jupyter-code-container)](https://hub.docker.com/r/chaichy/jupyter-code-container)
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/chaichy/jupyter-code-container)](https://hub.docker.com/r/chaichy/jupyter-code-container)
-
+![Cover Image](logo.png)
 
 > ✅ Now available in two flavors: CPU and GPU (CUDA-enabled)
 
