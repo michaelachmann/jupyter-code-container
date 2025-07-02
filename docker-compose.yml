@@ -12,6 +12,7 @@ services:
       - CF_TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
       - JUPYTER_TOKEN=${JUPYTER_TOKEN}
       - PASSWORD=${PASSWORD}
+      - REQUIREMENTS_FILE=${REQUIREMENTS_FILE}
     ports:
       - "8080:8080"
       - "8888:8888"
@@ -34,6 +35,7 @@ services:
       - CF_TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
       - JUPYTER_TOKEN=${JUPYTER_TOKEN}
       - PASSWORD=${PASSWORD}
+      - REQUIREMENTS_FILE=${REQUIREMENTS_FILE}
     ports:
       - "8081:8080"
       - "8889:8888"

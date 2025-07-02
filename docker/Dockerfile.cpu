@@ -5,14 +5,15 @@ FROM codercom/code-server:latest
 
 ARG TARGETARCH=amd64
 ENV DEBIAN_FRONTEND=noninteractive \
-    PATH="/opt/conda/bin:${PATH}"
+    PATH="/opt/conda/bin:${PATH}" \
+    SHELL=/bin/zsh
 
 USER root
 
 # 1) System deps + Miniforge
 RUN apt-get update && apt-get install -y \
-      curl git ca-certificates bzip2 && \
-    rm -rf /var/lib/apt/lists/* && \
+      curl git ca-certificates bzip2 zsh && \
+      rm -rf /var/lib/apt/lists/* && \
     curl -fsSL \
       "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" \
       -o /tmp/conda.sh && \
@@ -33,7 +34,13 @@ COPY config/ /home/coder/.config/
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
-RUN chown -R coder:coder /home/coder
+RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh \
+      -o /tmp/ohmyzsh_install.sh \
+ && chmod +x /tmp/ohmyzsh_install.sh \
+ && su - coder -c "/tmp/ohmyzsh_install.sh --unattended" \
+ && echo '. /opt/conda/etc/profile.d/conda.sh && conda activate' >> /home/coder/.zshrc \
+ && usermod --shell /bin/zsh coder \
+ && rm /tmp/ohmyzsh_install.sh
 
 # 5) VS Code extensions
 USER coder

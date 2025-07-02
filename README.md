@@ -30,6 +30,7 @@ docker run -d \
   -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
   -e JUPYTER_TOKEN="<your-jupyter-token>" \
   -e PASSWORD="<your-vscode-password>" \
+  -e REQUIREMENTS_FILE="/workspace/requirements.txt" \
   chaichy/jupyter-code-container:cpu
 ```
 
@@ -42,6 +43,7 @@ docker run -d --gpus all \
   -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
   -e JUPYTER_TOKEN="<your-jupyter-token>" \
   -e PASSWORD="<your-vscode-password>" \
+  -e REQUIREMENTS_FILE="/workspace/requirements.txt" \
   chaichy/jupyter-code-container:gpu
 ```
 
@@ -78,6 +80,7 @@ Want a full dev environment in the cloud in minutes?
 - **Auto-installed VS Code Extensions**: Python, Jupyter.
 - **Mount your code**: Mount a local folder to `/workspace` for editing and notebooks.
 - **Pre-configured VS Code ↔ Jupyter integration**.
+- **Zsh shell** with Oh My Zsh and automatic Conda activation.
 
 ---
 
@@ -134,6 +137,7 @@ docker run -d \
   -e CF_TUNNEL_TOKEN="<your-cloudflared-token>" \
   -e JUPYTER_TOKEN="<your-jupyter-token>" \
   -e PASSWORD="<your-vscode-password>" \
+  -e REQUIREMENTS_FILE="/workspace/requirements.txt" \
   chaichy/jupyter-code-container:latest
 ```
 
@@ -141,6 +145,7 @@ docker run -d \
 - `CF_TUNNEL_TOKEN`: [Get it here](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/)
 - `JUPYTER_TOKEN`: Password token for JupyterLab
 - `PASSWORD`: Password for VS Code
+- `REQUIREMENTS_FILE`: Optional path to additional requirements
 
 Access your services:
 
@@ -157,6 +162,7 @@ Access your services:
 | `JUPYTER_TOKEN`   | Token to secure JupyterLab                                            |
 | `PASSWORD`        | Password to secure code-server                                        |
 | `TARGETARCH`      | (Optional) Docker build arg for architecture (`amd64`, `arm64`)       |
+| `REQUIREMENTS_FILE` | (Optional) Path to a `requirements.txt` installed on startup |
 
 ---
 
