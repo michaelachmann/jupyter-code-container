@@ -18,6 +18,12 @@ cat > "${CONFIG_DIR}/settings.json" <<EOF
 EOF
 chown coder:coder "${CONFIG_DIR}/settings.json"
 
+# Optional additional requirements
+if [ -n "${REQUIREMENTS_FILE:-}" ] && [ -f "${REQUIREMENTS_FILE}" ]; then
+  echo "Installing packages from ${REQUIREMENTS_FILE}"
+  pip install --no-cache-dir -r "${REQUIREMENTS_FILE}"
+fi
+
 # Start ephemeral Cloudflare tunnel using token
 cloudflared tunnel run --token "${CF_TUNNEL_TOKEN}" &
 

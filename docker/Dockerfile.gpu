@@ -6,6 +6,7 @@ FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime
 ARG TARGETARCH=amd64
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/conda/bin:${PATH}" \
+    SHELL=/bin/zsh \
     NVIDIA_VISIBLE_DEVICES=all \
     NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
@@ -16,8 +17,8 @@ RUN groupadd -r coder && \
 
 # 1) System deps
 RUN apt-get update && apt-get install -y \
-      curl git ca-certificates bzip2 && \
-    rm -rf /var/lib/apt/lists/*
+      curl git ca-certificates bzip2 zsh && \
+      rm -rf /var/lib/apt/lists/*
 
 # 2) Python env (same shared deps)
 COPY config/environment.yml /tmp/environment.yml
@@ -31,7 +32,13 @@ RUN curl -fsSL \
 COPY config/ /root/.config/
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-RUN chown -R coder:coder /home/coder
+RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh \
+      -o /tmp/ohmyzsh_install.sh \
+ && chmod +x /tmp/ohmyzsh_install.sh \
+ && su - coder -c "/tmp/ohmyzsh_install.sh --unattended" \
+ && echo '. /opt/conda/etc/profile.d/conda.sh && conda activate' >> /home/coder/.zshrc \
+ && usermod --shell /bin/zsh coder \
+ && rm /tmp/ohmyzsh_install.sh
 
 # 4) VS Code extensions
 RUN curl -fsSL https://code-server.dev/install.sh | sh 
